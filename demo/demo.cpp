@@ -16,9 +16,9 @@
 #include <DVision/DVision.h>
 
 // OpenCV
-#include <opencv2/core.hpp>
-#include <opencv2/highgui.hpp>
-#include <opencv2/xfeatures2d/nonfree.hpp>
+#include <opencv2/core/core.hpp>
+#include <opencv2/highgui/highgui.hpp>
+#include <opencv2/nonfree/nonfree.hpp>
 
 
 using namespace DBoW2;

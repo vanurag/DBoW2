@@ -17,7 +17,7 @@
 #include <fstream>
 #include <string>
 #include <algorithm>
-#include <opencv2/core.hpp>
+#include <opencv2/core/core.hpp>
 
 #include "FeatureVector.h"
 #include "BowVector.h"

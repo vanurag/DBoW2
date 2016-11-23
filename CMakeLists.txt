@@ -3,7 +3,7 @@ project(DBoW2)
 include(ExternalProject)
 
 option(BUILD_DBoW2   "Build DBoW2"            ON)
-option(BUILD_Demo    "Build demo application" ON)
+option(BUILD_Demo    "Build demo application" OFF)
 
 if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
   set(CMAKE_BUILD_TYPE Release CACHE STRING "Choose the type of build." FORCE)
@@ -51,8 +51,8 @@ else(${DLib_FOUND})
   if(${DOWNLOAD_DLib_dependency})
     ExternalProject_Add(DLib
       PREFIX ${DEPENDENCY_DIR}
-      GIT_REPOSITORY http://github.com/dorian3d/DLib
-      GIT_TAG v1.1-nonfree
+      GIT_REPOSITORY https://github.com/vanurag/DLib
+      GIT_TAG opencv2.4
       INSTALL_DIR ${DEPENDENCY_INSTALL_DIR}
       CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=<INSTALL_DIR>)
     add_custom_target(Dependencies ${CMAKE_COMMAND} ${CMAKE_SOURCE_DIR} DEPENDS DLib)
