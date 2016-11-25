@@ -1,6 +1,5 @@
 cmake_minimum_required(VERSION 2.8)
 project(DBoW2)
-include(ExternalProject)
 
 option(BUILD_DBoW2   "Build DBoW2"            ON)
 option(BUILD_Demo    "Build demo application" OFF)
@@ -39,50 +38,31 @@ include_directories(${OpenCV_INCLUDE_DIRS})
 find_package(Boost REQUIRED)
 include_directories(${Boost_INCLUDE_DIR})
 
-find_package(DLib QUIET 
-  PATHS ${DEPENDENCY_INSTALL_DIR})
-if(${DLib_FOUND})
-  message("DLib library found, using it from the system")
-  include_directories(${DLib_INCLUDE_DIRS})
-  add_custom_target(Dependencies)
-else(${DLib_FOUND})
-  message("DLib library not found in the system, it will be downloaded on build")
-  option(DOWNLOAD_DLib_dependency "Download DLib dependency" ON)
-  if(${DOWNLOAD_DLib_dependency})
-    ExternalProject_Add(DLib
-      PREFIX ${DEPENDENCY_DIR}
-      GIT_REPOSITORY https://github.com/vanurag/DLib
-      GIT_TAG opencv2.4
-      INSTALL_DIR ${DEPENDENCY_INSTALL_DIR}
-      CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=<INSTALL_DIR>)
-    add_custom_target(Dependencies ${CMAKE_COMMAND} ${CMAKE_SOURCE_DIR} DEPENDS DLib)
-  else()
-    message(SEND_ERROR "Please, activate DOWNLOAD_DLib_dependency option or download manually")
-  endif(${DOWNLOAD_DLib_dependency})
-endif(${DLib_FOUND})
+find_package(DLib REQUIRED)
+
+# catkin 
+find_package(catkin REQUIRED COMPONENTS
+  DLib)
+
+catkin_package(
+	INCLUDE_DIRS include ${catkin_INCLUDE_DIRS}
+  LIBRARIES ${PROJECT_NAME}
+  CATKIN_DEPENDS DLib
+)
+include_directories(${catkin_INCLUDE_DIRS})
 
 if(BUILD_DBoW2)
   add_library(${PROJECT_NAME} SHARED ${SRCS})
   include_directories(include/DBoW2/)
   add_dependencies(${PROJECT_NAME} Dependencies)
-  target_link_libraries(${PROJECT_NAME} ${OpenCV_LIBS} ${DLib_LIBS})
+  target_link_libraries(${PROJECT_NAME} ${OpenCV_LIBS} ${DLib_LIBS} ${catkin_LIBRARIES})
 endif(BUILD_DBoW2)
 
 if(BUILD_Demo)
   add_executable(demo demo/demo.cpp)
-  target_link_libraries(demo ${PROJECT_NAME} ${OpenCV_LIBS} ${DLib_LIBS})
+  target_link_libraries(demo ${PROJECT_NAME} ${OpenCV_LIBS} ${DLib_LIBS} ${catkin_LIBRARIES})
   file(COPY demo/images DESTINATION ${CMAKE_BINARY_DIR}/)
 endif(BUILD_Demo)
 
 configure_file(src/DBoW2.cmake.in
   "${PROJECT_BINARY_DIR}/DBoW2Config.cmake" @ONLY)
-
-install(TARGETS ${PROJECT_NAME} DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
-if(BUILD_DBoW2)
-  install(DIRECTORY include/DBoW2 DESTINATION ${CMAKE_INSTALL_PREFIX}/include)
-endif()
-install(FILES "${CMAKE_CURRENT_BINARY_DIR}/DBoW2Config.cmake"
-  DESTINATION ${CMAKE_INSTALL_PREFIX}/include/${PROJECT_NAME})
-install(FILES "${PROJECT_BINARY_DIR}/DBoW2Config.cmake" 
-  DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/cmake/DBoW2/)
-install(DIRECTORY ${DEPENDENCY_INSTALL_DIR}/ DESTINATION ${CMAKE_INSTALL_PREFIX} OPTIONAL)
