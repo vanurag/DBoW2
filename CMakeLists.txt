@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8)
-project(DBoW2)
+project(dbow2)
 
 option(BUILD_DBoW2   "Build DBoW2"            ON)
 option(BUILD_Demo    "Build demo application" OFF)
@@ -32,22 +32,22 @@ set(SRCS
 set(DEPENDENCY_DIR ${CMAKE_CURRENT_BINARY_DIR}/dependencies)
 set(DEPENDENCY_INSTALL_DIR ${DEPENDENCY_DIR}/install)
 
-find_package(OpenCV REQUIRED)
+find_package(OpenCV EXACT 2.4.11 REQUIRED)
 include_directories(${OpenCV_INCLUDE_DIRS})
 
 find_package(Boost REQUIRED)
 include_directories(${Boost_INCLUDE_DIR})
 
-find_package(DLib REQUIRED)
+find_package(dlib REQUIRED)
 
 # catkin 
 find_package(catkin REQUIRED COMPONENTS
-  DLib)
+  dlib)
 
 catkin_package(
 	INCLUDE_DIRS include ${catkin_INCLUDE_DIRS}
   LIBRARIES ${PROJECT_NAME}
-  CATKIN_DEPENDS DLib
+  CATKIN_DEPENDS dlib
 )
 include_directories(${catkin_INCLUDE_DIRS})
 
@@ -55,14 +55,14 @@ if(BUILD_DBoW2)
   add_library(${PROJECT_NAME} SHARED ${SRCS})
   include_directories(include/DBoW2/)
   add_dependencies(${PROJECT_NAME} Dependencies)
-  target_link_libraries(${PROJECT_NAME} ${OpenCV_LIBS} ${DLib_LIBS} ${catkin_LIBRARIES})
+  target_link_libraries(${PROJECT_NAME} ${OpenCV_LIBS} ${dlib_LIBS} ${catkin_LIBRARIES})
 endif(BUILD_DBoW2)
 
 if(BUILD_Demo)
   add_executable(demo demo/demo.cpp)
-  target_link_libraries(demo ${PROJECT_NAME} ${OpenCV_LIBS} ${DLib_LIBS} ${catkin_LIBRARIES})
+  target_link_libraries(demo ${PROJECT_NAME} ${OpenCV_LIBS} ${dlib_LIBS} ${catkin_LIBRARIES})
   file(COPY demo/images DESTINATION ${CMAKE_BINARY_DIR}/)
 endif(BUILD_Demo)
 
 configure_file(src/DBoW2.cmake.in
-  "${PROJECT_BINARY_DIR}/DBoW2Config.cmake" @ONLY)
+  "${PROJECT_BINARY_DIR}/dbow2Config.cmake" @ONLY)

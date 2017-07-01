@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <package format="2">
-  <name>DBoW2</name>
+  <name>dbow2</name>
   <version>0.0.0</version>
   <description>DBoW2_catkin</description>
   <maintainer email="avempati@ethz.ch">Anurag Vempati</maintainer>
@@ -9,5 +9,5 @@
 
   <buildtool_depend>catkin</buildtool_depend>
 
-  <depend>DLib</depend>
+  <depend>dlib</depend>
 </package>
